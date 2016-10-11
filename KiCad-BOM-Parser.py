@@ -85,6 +85,7 @@ def generate_csv(unique_components):
 
 components = extract_components_from_xml('vs3000-main-board.xml')
 unique_components = find_unique_components(components, features_to_skip)
+unique_components = sorted(unique_components, key=lambda k: k['Designator'])
 generate_csv(unique_components)
 get_all_feauters(unique_components)
 
