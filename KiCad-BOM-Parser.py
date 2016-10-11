@@ -65,6 +65,13 @@ def find_unique_components(components_list, features):
 
     return unique_components
 
+#Add separated lib and part name
+def add_lib_and_part_name(components):
+    for component in components:
+        separated = component['Footprint'].split(':')
+        component['Footprint-lib'] = separated[0]
+        component['Footprint-part'] = separated[1]
+
 def get_all_feauters(components):
     features = set()
     for component in components:
@@ -86,6 +93,7 @@ def generate_csv(unique_components):
 components = extract_components_from_xml('vs3000-main-board.xml')
 unique_components = find_unique_components(components, features_to_skip)
 unique_components = sorted(unique_components, key=lambda k: k['Designator'])
+add_lib_and_part_name(unique_components)
 generate_csv(unique_components)
 get_all_feauters(unique_components)
 
