@@ -17,10 +17,10 @@ def main():
     print 'In:', len(components), 'components found', len(unique_components), 'unique.'
 
 #Check if componants are the same except features
-def is_component_equal(component1, component2, features):
+def is_component_equal(component1, component2, omit_features):
     keys1 = component1.keys()
     keys2 = component2.keys()
-    for feature in features:
+    for feature in omit_features:
         if feature in keys1:
             keys1.remove(feature)
         if feature in keys2:
