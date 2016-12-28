@@ -1,7 +1,20 @@
 import xml.etree.ElementTree as ET
 import csv
 
-features_to_skip = ['Designator', 'Quantity']
+def main():
+
+    """Main function of the program"""
+
+    features_to_skip = ['Designator', 'Quantity']
+
+    components = extract_components_from_xml('vs-main-board.xml')
+    unique_components = find_unique_components(components, features_to_skip)
+    unique_components = sorted(unique_components, key=lambda k: k['Designator'])
+    add_lib_and_part_name(unique_components)
+    generate_csv(unique_components)
+    get_all_feauters(unique_components)
+    print '....................................SUMMARY....................................'
+    print 'In:', len(components), 'components found', len(unique_components), 'unique.'
 
 #Check if componants are the same except features
 def is_component_equal(component1, component2, features):
@@ -51,8 +64,9 @@ def extract_components_from_xml(file):
 
 #Building list of unique elements but ignoring features
 def find_unique_components(components_list, features):
+
     unique_components = []
-    for component in components:
+    for component in components_list:
         result = is_component_in_list(component,
                                       unique_components,
                                       features)
@@ -90,15 +104,9 @@ def generate_csv(unique_components):
             print component
             #writer.writerow(component)
 
-components = extract_components_from_xml('vs3000-main-board.xml')
-unique_components = find_unique_components(components, features_to_skip)
-unique_components = sorted(unique_components, key=lambda k: k['Designator'])
-add_lib_and_part_name(unique_components)
-generate_csv(unique_components)
-get_all_feauters(unique_components)
+if __name__ == "__main__":
+    main()
 
 #for component in unique_components:
  #   print component
 
-print '....................................SUMMARY....................................'
-print 'In:', len(components), 'components found', len(unique_components), 'unique.'
