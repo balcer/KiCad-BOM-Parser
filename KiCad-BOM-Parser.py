@@ -4,19 +4,28 @@
 
 import xml.etree.ElementTree as ET
 import csv
+import sys
+import os
 
 def main():
 
     """Main function of the program."""
 
+    if len(sys.argv) < 2 or sys.argv[1] == '--help':
+        print 'Usage: python {} [FILE]'.format(sys.argv[0])
+        sys.exit()
+    else:
+        input_file_name = sys.argv[1]
+        output_file_name = os.path.splitext(os.path.basename(sys.argv[1]))[0] + ".csv"
+
     features_to_skip = ['Designator', 'Quantity']
 
-    components = extract_components_from_xml('vs-main-board.xml')
+    components = extract_components_from_xml(input_file_name)
     unique_components = find_unique_components(components, features_to_skip)
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
     add_lib_and_part_name(unique_components)
-    generate_csv(unique_components)
     get_all_feauters(unique_components)
+    generate_csv(unique_components, output_file_name)
     print '....................................SUMMARY....................................'
     print 'In:', len(components), 'components found', len(unique_components), 'unique.'
 
@@ -59,7 +68,11 @@ def extract_components_from_xml(file_name):
     """Load raw data about components from KiCad xml file."""
 
     components = []
-    tree = ET.parse(file_name)
+    try:
+        tree = ET.parse(file_name)
+    except IOError:
+        print 'Input file error'
+        sys.exit()
     root = tree.getroot()
     for comp in root.iter('comp'):
         component = {'Designator': comp.get('ref'),
@@ -115,13 +128,13 @@ def get_all_feauters(components):
             features.add(key)
     return features
 
-def generate_csv(unique_components):
+def generate_csv(unique_components, file_name):
 
     """Generate output csv file."""
 
     fieldnames = get_all_feauters(unique_components)
     print fieldnames
-    with open('out.csv', 'wb') as csv_file:
+    with open(file_name, 'wb') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(unique_components)
