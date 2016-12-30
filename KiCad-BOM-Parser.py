@@ -24,7 +24,6 @@ def main():
     unique_components = find_unique_components(components, features_to_skip)
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
     add_lib_and_part_name(unique_components)
-    get_all_feauters(unique_components)
     generate_csv(unique_components, output_file_name)
     print '....................................SUMMARY....................................'
     print 'In:', len(components), 'components found', len(unique_components), 'unique.'
