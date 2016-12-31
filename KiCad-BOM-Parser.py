@@ -3,9 +3,11 @@
 """
 
 import xml.etree.ElementTree as ET
+import natsort
 import csv
 import sys
 import os
+import string
 
 def main():
 
@@ -23,6 +25,7 @@ def main():
     components = extract_components_from_xml(input_file_name)
     unique_components = find_unique_components(components, features_to_skip)
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
+    sort_designators(unique_components)
     add_lib_and_part_name(unique_components)
     generate_csv(unique_components, output_file_name)
     print '....................................SUMMARY....................................'
@@ -105,6 +108,17 @@ def find_unique_components(components_list, features):
             unique_components.append(component)
 
     return unique_components
+
+def sort_designators(components):
+
+    """Sort Designator string to make it more readible.
+    "R1 R3 R2" -> "R1 R2 R3" 
+    """
+
+    for component in components:
+        designators = string.split(component['Designator'])
+        sorted_designators = natsort.natsorted(designators)
+        component['Designator'] = " ".join(sorted_designators)
 
 def add_lib_and_part_name(components):
 
