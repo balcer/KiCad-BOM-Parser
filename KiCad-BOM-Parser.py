@@ -17,12 +17,12 @@ def main():
         print 'Usage: python {} [FILE]'.format(sys.argv[0])
         sys.exit()
     else:
-        input_file_name = sys.argv[1]
+        xml_input_file_name = sys.argv[1]
         output_file_name = os.path.splitext(os.path.basename(sys.argv[1]))[0] + ".csv"
 
     features_to_skip = ['Designator', 'Quantity']
 
-    components = extract_components_from_xml(input_file_name)
+    components = extract_components_from_xml(xml_input_file_name)
     unique_components = find_unique_components(components, features_to_skip)
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
     sort_designators(unique_components)
