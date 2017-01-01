@@ -18,11 +18,13 @@ def main():
         sys.exit()
     else:
         xml_input_file_name = sys.argv[1]
+        pcb_input_file_name = os.path.splitext(os.path.basename(sys.argv[1]))[0] + ".kicad_pcb"
         output_file_name = os.path.splitext(os.path.basename(sys.argv[1]))[0] + ".csv"
 
     features_to_skip = ['Designator', 'Quantity']
 
     components = extract_components_from_xml(xml_input_file_name)
+    extract_data_from_pcb_file(pcb_input_file_name)
     unique_components = find_unique_components(components, features_to_skip)
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
     sort_designators(unique_components)
@@ -86,6 +88,41 @@ def extract_components_from_xml(file_name):
                 component[field.get('name')] = field.text
         components.append(component)
     return components
+
+def extract_data_from_pcb_file(file_name):
+
+    """Load aditional data from KiCad PCB file."""
+
+    data = []
+    with open(file_name) as pcb_file:
+        for line in pcb_file:
+            for word in line.split():
+                data.append(word)
+
+    reference_detected = 0
+    components = []
+
+    thru_hole_count = 0
+    smd_count = 0
+    designator = ''
+
+    for word in data:
+        if reference_detected == 1:
+            designator = word
+            reference_detected = 0
+        if word == 'reference':
+            component = {'Designator': designator,
+                         'smd_count': smd_count,
+                         'thru_hole': thru_hole_count}
+            components.append(component)
+            reference_detected = 1
+            thru_hole_count = 0
+            smd_count = 0
+        if word == 'smd':
+            smd_count += 1
+        if word == 'thru_hole':
+            thru_hole_count += 1
+    components.pop(0)
 
 def find_unique_components(components_list, features):
 
