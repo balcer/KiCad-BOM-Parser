@@ -3,11 +3,11 @@
 """
 
 import xml.etree.ElementTree as ET
-import natsort
 import csv
 import sys
 import os
 import string
+import natsort
 
 def main():
 
