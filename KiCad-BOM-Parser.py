@@ -151,8 +151,6 @@ def generate_csv(unique_components, file_name):
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(unique_components)
-        for component in unique_components:
-            print component
 
 if __name__ == "__main__":
     main()
