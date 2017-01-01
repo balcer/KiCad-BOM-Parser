@@ -112,7 +112,7 @@ def find_unique_components(components_list, features):
 def sort_designators(components):
 
     """Sort Designator string to make it more readible.
-    "R1 R3 R2" -> "R1 R2 R3" 
+    "R1 R3 R2" -> "R1 R2 R3"
     """
 
     for component in components:
