@@ -33,40 +33,6 @@ def main():
     print '....................................SUMMARY....................................'
     print 'In:', len(components_from_xml), 'components found', len(unique_components), 'unique.'
 
-def is_component_equal(component1, component2, omit_features):
-
-    """Check if components are the same except features in omit_features."""
-
-    keys1 = component1.keys()
-    keys2 = component2.keys()
-    for feature in omit_features:
-        if feature in keys1:
-            keys1.remove(feature)
-        if feature in keys2:
-            keys2.remove(feature)
-    if len(keys1) == len(keys2):
-        for key in keys1:
-            if key in component2 and component1[key] == component2[key]:
-                pass
-            else:
-                return False
-        return True
-    return False
-
-def is_component_in_list(component, components_list, features):
-
-    """Check if component is in list ignoring features."""
-
-    result = {'presence': False, 'position': 0}
-    for i, component_from_list in enumerate(components_list):
-        if is_component_equal(component,
-                              component_from_list,
-                              features):
-            result['presence'] = True
-            result['position'] = i
-            return result
-    return result
-
 def extract_components_from_xml(file_name):
 
     """Load raw data about components from KiCad xml file."""
@@ -124,6 +90,40 @@ def extract_data_from_pcb_file(file_name):
             thru_hole_count += 1
     components.pop(0)
     return components
+
+def is_component_equal(component1, component2, omit_features):
+
+    """Check if components are the same except features in omit_features."""
+
+    keys1 = component1.keys()
+    keys2 = component2.keys()
+    for feature in omit_features:
+        if feature in keys1:
+            keys1.remove(feature)
+        if feature in keys2:
+            keys2.remove(feature)
+    if len(keys1) == len(keys2):
+        for key in keys1:
+            if key in component2 and component1[key] == component2[key]:
+                pass
+            else:
+                return False
+        return True
+    return False
+
+def is_component_in_list(component, components_list, features):
+
+    """Check if component is in list ignoring features."""
+
+    result = {'presence': False, 'position': 0}
+    for i, component_from_list in enumerate(components_list):
+        if is_component_equal(component,
+                              component_from_list,
+                              features):
+            result['presence'] = True
+            result['position'] = i
+            return result
+    return result
 
 def find_unique_components(components_list, features):
 
