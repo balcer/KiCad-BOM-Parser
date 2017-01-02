@@ -24,7 +24,7 @@ def main():
     features_to_skip = ['Designator', 'Quantity']
 
     components_from_xml = extract_components_from_xml(xml_input_file_name)
-    extract_data_from_pcb_file(pcb_input_file_name)
+    components_from_pcb = extract_data_from_pcb_file(pcb_input_file_name)
     unique_components = find_unique_components(components_from_xml, features_to_skip)
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
     sort_designators(unique_components)
@@ -123,6 +123,7 @@ def extract_data_from_pcb_file(file_name):
         if word == 'thru_hole':
             thru_hole_count += 1
     components.pop(0)
+    return components
 
 def find_unique_components(components_list, features):
 
