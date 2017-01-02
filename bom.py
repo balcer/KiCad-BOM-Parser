@@ -23,15 +23,15 @@ def main():
 
     features_to_skip = ['Designator', 'Quantity']
 
-    components = extract_components_from_xml(xml_input_file_name)
+    components_from_xml = extract_components_from_xml(xml_input_file_name)
     extract_data_from_pcb_file(pcb_input_file_name)
-    unique_components = find_unique_components(components, features_to_skip)
+    unique_components = find_unique_components(components_from_xml, features_to_skip)
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
     sort_designators(unique_components)
     add_lib_and_part_name(unique_components)
     generate_csv(unique_components, output_file_name)
     print '....................................SUMMARY....................................'
-    print 'In:', len(components), 'components found', len(unique_components), 'unique.'
+    print 'In:', len(components_from_xml), 'components found', len(unique_components), 'unique.'
 
 def is_component_equal(component1, component2, omit_features):
 
