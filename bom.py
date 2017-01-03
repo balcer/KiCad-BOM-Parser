@@ -97,6 +97,14 @@ def extract_components_from_pcb(file_name):
             smd_count += 1
         if word == 'thru_hole':
             thru_hole_count += 1
+
+    #push last found component
+    component = {'Designator': designator,
+                 'smd_count': smd_count,
+                 'thru_hole': thru_hole_count}
+    components.append(component)
+
+    #pop first blanc component
     components.pop(0)
 
     print('done.')
