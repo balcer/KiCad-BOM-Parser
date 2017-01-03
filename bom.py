@@ -26,7 +26,7 @@ def main():
     features_to_skip = ['Designator', 'Quantity']
 
     components_from_xml = extract_components_from_xml(xml_input_file_name)
-    components_from_pcb = extract_data_from_pcb_file(pcb_input_file_name)
+    components_from_pcb = extract_components_from_pcb(pcb_input_file_name)
     unique_components = find_unique_components(components_from_xml, features_to_skip)
     sort_designators(unique_components)
     generate_csv(unique_components, output_file_name)
@@ -62,7 +62,7 @@ def extract_components_from_xml(file_name):
 
     return components
 
-def extract_data_from_pcb_file(file_name):
+def extract_components_from_pcb(file_name):
 
     """Load aditional data from KiCad PCB file."""
 
