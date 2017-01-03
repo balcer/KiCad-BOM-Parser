@@ -27,6 +27,7 @@ def main():
 
     components_from_xml = extract_components_from_xml(xml_input_file_name)
     components_from_pcb = extract_components_from_pcb(pcb_input_file_name)
+    merge_components(components_from_xml, components_from_pcb)
     unique_components = find_unique_components(components_from_xml, features_to_skip)
     generate_csv(unique_components, output_file_name)
 
@@ -107,6 +108,38 @@ def extract_components_from_pcb(file_name):
     print('Found {} components.'.format(len(components)))
 
     return components
+
+def merge_components(components_from_xml, components_from_pcb):
+
+    """Checks integrity of both lists and merge them together"""
+
+    print('Checking data integrity...', end='')
+
+    if len(components_from_xml) != len(components_from_pcb):
+        print('error.')
+        sys.exit()
+
+    component_counter = 0
+
+    for component_from_xml in components_from_xml:
+        for component_from_pcb in components_from_pcb:
+            if component_from_xml['Designator'] == component_from_pcb['Designator']:
+                component_counter += 1
+                break
+
+    if len(components_from_xml) != component_counter:
+        print('error.')
+        sys.exit()
+    print ('OK.')
+    print('Merging lists...', end='')
+
+    for component_from_xml in components_from_xml:
+        for component_from_pcb in components_from_pcb:
+            if component_from_xml['Designator'] == component_from_pcb['Designator']:
+                component_from_xml['SMD pads'] = component_from_pcb['smd_count']
+                component_from_xml['THT pads'] = component_from_pcb['thru_hole']
+
+    return components_from_xml
 
 def is_component_equal(component1, component2, omit_features):
 
