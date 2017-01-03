@@ -27,7 +27,6 @@ def main():
     components_from_pcb = extract_data_from_pcb_file(pcb_input_file_name)
     unique_components = find_unique_components(components_from_xml, features_to_skip)
     sort_designators(unique_components)
-    add_lib_and_part_name(unique_components)
     generate_csv(unique_components, output_file_name)
     print '....................................SUMMARY....................................'
     print 'In:', len(components_from_xml), 'components found', len(unique_components), 'unique.'
@@ -157,17 +156,6 @@ def sort_designators(components):
         designators = string.split(component['Designator'])
         sorted_designators = natsort.natsorted(designators)
         component['Designator'] = " ".join(sorted_designators)
-
-def add_lib_and_part_name(components):
-
-    """Add separated "Footprint-lib" and "Footprint-part"
-    features based on "Footprint" feature.
-    """
-
-    for component in components:
-        separated = component['Footprint'].split(':')
-        component['Footprint-lib'] = separated[0]
-        component['Footprint-part'] = separated[1]
 
 def get_all_feauters(components):
 
