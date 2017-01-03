@@ -32,9 +32,9 @@ def main():
 
 def extract_components_from_xml(file_name):
 
-    """Load raw data about components from KiCad xml file."""
+    """Load raw data about components from KiCAD xml file."""
 
-    print('Extractiong data from {}...'.format(file_name), end='')
+    print('Extracting data from {}...'.format(file_name), end='')
 
     components = []
     try:
@@ -54,18 +54,15 @@ def extract_components_from_xml(file_name):
         components.append(component)
 
     print('done.')
-    print('Found {} components. Features found:'.format(len(components)))
-
-    for key in components[0].keys():
-        print(key)
+    print('Found {} components.'.format(len(components)))
 
     return components
 
 def extract_components_from_pcb(file_name):
 
-    """Load aditional data from KiCad PCB file."""
+    """Load additional data from KiCAD PCB file."""
 
-    print('Extractiong data from {}...'.format(file_name), end='')
+    print('Extracting data from {}...'.format(file_name), end='')
 
     data = []
     with open(file_name) as pcb_file:
@@ -103,7 +100,7 @@ def extract_components_from_pcb(file_name):
                  'thru_hole': thru_hole_count}
     components.append(component)
 
-    #pop first blanc component
+    #pop first blank component
     components.pop(0)
 
     print('done.')
@@ -149,7 +146,7 @@ def find_unique_components(components_list, features):
 
     """Converts raw components list to list of unique components
     omitting omit_features and adds Quantity according to how many
-    components were equal. Aditionaly build Designator string which
+    components were equal. Additionally build Designator string which
     contains Designators of all equal components separated by space.
     """
 
@@ -171,7 +168,7 @@ def find_unique_components(components_list, features):
 
 def sort_designators(components):
 
-    """Sort Designator string to make it more readible.
+    """Sort Designator string to make it more readable.
     "R1 R3 R2" -> "R1 R2 R3"
     """
 
@@ -180,7 +177,7 @@ def sort_designators(components):
         sorted_designators = natsort.natsorted(designators)
         component['Designator'] = " ".join(sorted_designators)
 
-def get_all_feauters(components):
+def get_all_features(components):
 
     """Extracts all features from component list."""
 
@@ -194,7 +191,7 @@ def generate_csv(unique_components, file_name):
 
     """Generate output csv file."""
 
-    fieldnames = get_all_feauters(unique_components)
+    fieldnames = get_all_features(unique_components)
     with open(file_name, 'wb') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
