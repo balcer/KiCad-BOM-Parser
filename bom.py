@@ -2,6 +2,8 @@
 .csv file of unique components with quantity
 """
 
+from __future__ import print_function
+
 import xml.etree.ElementTree as ET
 import csv
 import sys
@@ -14,7 +16,7 @@ def main():
     """Main function of the program."""
 
     if len(sys.argv) < 2 or sys.argv[1] == '--help':
-        print 'Usage: python {} [FILE]'.format(sys.argv[0])
+        print('Usage: python {} [FILE]'.format(sys.argv[0]))
         sys.exit()
     else:
         xml_input_file_name = sys.argv[1]
@@ -28,18 +30,18 @@ def main():
     unique_components = find_unique_components(components_from_xml, features_to_skip)
     sort_designators(unique_components)
     generate_csv(unique_components, output_file_name)
-    print '....................................SUMMARY....................................'
-    print 'In:', len(components_from_xml), 'components found', len(unique_components), 'unique.'
 
 def extract_components_from_xml(file_name):
 
     """Load raw data about components from KiCad xml file."""
 
+    print('Extractiong data from {}...'.format(file_name), end='')
+
     components = []
     try:
         tree = ET.parse(file_name)
     except IOError:
-        print 'Input file error'
+        print('Input file error')
         sys.exit()
     root = tree.getroot()
     for comp in root.iter('comp'):
@@ -51,11 +53,20 @@ def extract_components_from_xml(file_name):
             for field in fields.iter('field'):
                 component[field.get('name')] = field.text
         components.append(component)
+
+    print('done.')
+    print('Found {} components. Features found:'.format(len(components)))
+
+    for key in components[0].keys():
+        print(key)
+
     return components
 
 def extract_data_from_pcb_file(file_name):
 
     """Load aditional data from KiCad PCB file."""
+
+    print('Extractiong data from {}...'.format(file_name), end='')
 
     data = []
     with open(file_name) as pcb_file:
@@ -87,6 +98,10 @@ def extract_data_from_pcb_file(file_name):
         if word == 'thru_hole':
             thru_hole_count += 1
     components.pop(0)
+
+    print('done.')
+    print('Found {} components.'.format(len(components)))
+
     return components
 
 def is_component_equal(component1, component2, omit_features):
@@ -172,7 +187,6 @@ def generate_csv(unique_components, file_name):
     """Generate output csv file."""
 
     fieldnames = get_all_feauters(unique_components)
-    print fieldnames
     with open(file_name, 'wb') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
