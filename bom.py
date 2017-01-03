@@ -28,7 +28,6 @@ def main():
     components_from_xml = extract_components_from_xml(xml_input_file_name)
     components_from_pcb = extract_components_from_pcb(pcb_input_file_name)
     unique_components = find_unique_components(components_from_xml, features_to_skip)
-    sort_designators(unique_components)
     generate_csv(unique_components, output_file_name)
 
 def extract_components_from_xml(file_name):
@@ -167,6 +166,7 @@ def find_unique_components(components_list, features):
             unique_components.append(component)
 
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
+    sort_designators(unique_components)
     return unique_components
 
 def sort_designators(components):
