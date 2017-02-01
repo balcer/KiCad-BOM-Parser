@@ -16,30 +16,37 @@ def main():
     """Main function of the program."""
 
     if len(sys.argv) < 2 or sys.argv[1] == '--help':
-        print('Usage: python {} [FILE]'.format(sys.argv[0]))
+        print('Usage: python {} KICAD_PROJECT_DIRECTORY'.format(sys.argv[0]))
         sys.exit()
     else:
-        xml_input_file_name = sys.argv[1]
-        pcb_input_file_name = os.path.splitext(os.path.basename(sys.argv[1]))[0] + ".kicad_pcb"
-        output_file_name = os.path.splitext(os.path.basename(sys.argv[1]))[0] + ".csv"
+        path_to_project_directory = sys.argv[1]
+        for project_file in os.listdir(path_to_project_directory):
+            if project_file.endswith(".xml"):
+                xml_file_name = project_file
+            elif project_file.endswith(".kicad_pcb"):
+                pcb_file_name = project_file
+
+        path_to_xml_file = path_to_project_directory + xml_file_name
+        path_to_pcb_file = path_to_project_directory + pcb_file_name
+        path_to_csv_file = path_to_project_directory + os.path.splitext(xml_file_name)[0] + ".csv"
 
     features_to_skip = ['Designator', 'Quantity']
 
-    components_from_xml = extract_components_from_xml(xml_input_file_name)
-    components_from_pcb = extract_components_from_pcb(pcb_input_file_name)
+    components_from_xml = extract_components_from_xml(path_to_xml_file)
+    components_from_pcb = extract_components_from_pcb(path_to_pcb_file)
     merge_components(components_from_xml, components_from_pcb)
     unique_components = find_unique_components(components_from_xml, features_to_skip)
-    generate_csv(unique_components, output_file_name)
+    generate_csv(unique_components, path_to_csv_file)
 
-def extract_components_from_xml(file_name):
+def extract_components_from_xml(path_to_file):
 
     """Load raw data about components from KiCAD xml file."""
 
-    print('Extracting data from {}...'.format(file_name), end='')
+    print('Extracting data from {}...'.format(path_to_file), end='')
 
     components = []
     try:
-        tree = ET.parse(file_name)
+        tree = ET.parse(path_to_file)
     except IOError:
         print('Input file error')
         sys.exit()
@@ -59,14 +66,14 @@ def extract_components_from_xml(file_name):
 
     return components
 
-def extract_components_from_pcb(file_name):
+def extract_components_from_pcb(path_to_file):
 
     """Load additional data from KiCAD PCB file."""
 
-    print('Extracting data from {}...'.format(file_name), end='')
+    print('Extracting data from {}...'.format(path_to_file), end='')
 
     data = []
-    with open(file_name) as pcb_file:
+    with open(path_to_file) as pcb_file:
         for line in pcb_file:
             for word in line.split():
                 data.append(word)
@@ -220,12 +227,12 @@ def get_all_features(components):
             features.add(key)
     return features
 
-def generate_csv(unique_components, file_name):
+def generate_csv(unique_components, path_to_file):
 
     """Generate output csv file."""
 
     fieldnames = get_all_features(unique_components)
-    with open(file_name, 'wb') as csv_file:
+    with open(path_to_file, 'wb') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(unique_components)
