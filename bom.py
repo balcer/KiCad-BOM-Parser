@@ -42,7 +42,7 @@ def extract_components_from_xml(path_to_file):
 
     """Load raw data about components from KiCAD xml file."""
 
-    print('Extracting data from {}...'.format(path_to_file), end='')
+    print('Extracting data from {}...'.format(os.path.basename(path_to_file)), end='')
 
     components = []
     try:
@@ -70,7 +70,7 @@ def extract_components_from_pcb(path_to_file):
 
     """Load additional data from KiCAD PCB file."""
 
-    print('Extracting data from {}...'.format(path_to_file), end='')
+    print('Extracting data from {}...'.format(os.path.basename(path_to_file)), end='')
 
     data = []
     with open(path_to_file) as pcb_file:
@@ -116,7 +116,7 @@ def merge_components(components_from_xml, components_from_pcb):
 
     """Checks integrity of both lists and merge them together"""
 
-    print('Checking data integrity...', end='')
+    print('Merging data from xml and pcb files...', end='')
 
     if len(components_from_xml) != len(components_from_pcb):
         print('error.')
@@ -133,8 +133,6 @@ def merge_components(components_from_xml, components_from_pcb):
     if len(components_from_xml) != component_counter:
         print('error.')
         sys.exit()
-    print ('OK.')
-    print('Merging lists...', end='')
 
     """Adding features from pcb component list to xml component list"""
 
@@ -143,6 +141,8 @@ def merge_components(components_from_xml, components_from_pcb):
             if component_from_xml['Designator'] == component_from_pcb['Designator']:
                 component_from_xml['SMD pads'] = component_from_pcb['smd_count']
                 component_from_xml['THT pads'] = component_from_pcb['thru_hole']
+
+    print('done.')
 
     return components_from_xml
 
@@ -188,6 +188,8 @@ def find_unique_components(components_list, features):
     contains Designators of all equal components separated by space.
     """
 
+    print('Building unique components list...', end='')
+
     unique_components = []
     for component in components_list:
         result = is_component_in_list(component,
@@ -202,6 +204,10 @@ def find_unique_components(components_list, features):
 
     unique_components = sorted(unique_components, key=lambda k: k['Designator'])
     sort_designators(unique_components)
+
+    print('done.')
+    print('Found {} unique components.'.format(len(unique_components)))
+
     return unique_components
 
 def sort_designators(components):
@@ -234,6 +240,8 @@ def generate_csv(unique_components, path_to_file):
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(unique_components)
+
+    print('Data saved to {}.'.format(os.path.basename(path_to_file)))
 
 if __name__ == "__main__":
     main()
