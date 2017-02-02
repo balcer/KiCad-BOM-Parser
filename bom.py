@@ -78,38 +78,34 @@ def extract_components_from_pcb(path_to_file):
             for word in line.split():
                 data.append(word)
 
-    reference_detected = 0
     components = []
-
-    thru_hole_count = 0
-    smd_count = 0
     designator = ''
+    bracket_counter = 0
+    smd_counter = 0
+    tht_counter = 0
+    in_module = False
 
-    for word in data:
-        if reference_detected == 1:
-            designator = word
-            reference_detected = 0
-        if word == 'reference':
+    for idx, word in enumerate(data):
+        if word == '(module':
+            bracket_counter = 0
+            smd_counter = 0
+            tht_counter = 0
+            in_module = True
+        if in_module is True:
+            if word == 'reference':
+                designator = data[idx + 1]
+            if word == '(pad':
+                if data[idx + 2] == 'smd':
+                    smd_counter = smd_counter + 1
+                if data[idx + 2] == 'thru_hole':
+                    tht_counter = tht_counter + 1
+            bracket_counter = bracket_counter + word.count('(') - word.count(')')
+        if (bracket_counter == 0) and (in_module is True):
+            in_module = False
             component = {'Designator': designator,
-                         'smd_count': smd_count,
-                         'thru_hole': thru_hole_count}
+                         'smd_count': smd_counter,
+                         'thru_hole': tht_counter}
             components.append(component)
-            reference_detected = 1
-            thru_hole_count = 0
-            smd_count = 0
-        if word == 'smd':
-            smd_count += 1
-        if word == 'thru_hole':
-            thru_hole_count += 1
-
-    #push last found component
-    component = {'Designator': designator,
-                 'smd_count': smd_count,
-                 'thru_hole': thru_hole_count}
-    components.append(component)
-
-    #pop first blank component
-    components.pop(0)
 
     print('done.')
     print('Found {} components.'.format(len(components)))
