@@ -34,8 +34,8 @@ def main():
 
     components_from_xml = extract_components_from_xml(path_to_xml_file)
     components_from_pcb = extract_components_from_pcb(path_to_pcb_file)
-    merge_components(components_from_xml, components_from_pcb)
-    unique_components = find_unique_components(components_from_xml, features_to_skip)
+    components_merged = merge_components(components_from_xml, components_from_pcb)
+    unique_components = find_unique_components(components_merged, features_to_skip)
     generate_csv(unique_components, path_to_csv_file)
 
 def extract_components_from_xml(path_to_file):
@@ -135,6 +135,8 @@ def merge_components(components_from_xml, components_from_pcb):
         sys.exit()
     print ('OK.')
     print('Merging lists...', end='')
+
+    """Adding features from pcb component list to xml component list"""
 
     for component_from_xml in components_from_xml:
         for component_from_pcb in components_from_pcb:
