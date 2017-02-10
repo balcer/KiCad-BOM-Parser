@@ -19,7 +19,7 @@ def main():
         print('Usage: python {} KICAD_PROJECT_DIRECTORY'.format(sys.argv[0]))
         sys.exit()
     else:
-        path_to_project_directory = sys.argv[1]
+        path_to_project_directory = sys.argv[1] + '/'
         for project_file in os.listdir(path_to_project_directory):
             if project_file.endswith(".xml"):
                 xml_file_name = project_file
