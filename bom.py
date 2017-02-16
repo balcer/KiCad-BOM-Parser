@@ -95,6 +95,8 @@ def extract_components_from_pcb(path_to_file):
     smd_counter = 0
     tht_counter = 0
     in_module = False
+    side_flag = False
+    side = ''
 
     for idx, word in enumerate(data):
         if word == '(module':
@@ -102,6 +104,14 @@ def extract_components_from_pcb(path_to_file):
             smd_counter = 0
             tht_counter = 0
             in_module = True
+            side_flag = True
+        if side_flag is True:
+            if word == 'F.Cu)':
+                side = 'Top'
+                side_flag = False
+            elif word == 'B.Cu)':
+                side = 'Bottom'
+                side_flag = False
         if in_module is True:
             if word == 'reference':
                 designator = data[idx + 1]
@@ -115,7 +125,8 @@ def extract_components_from_pcb(path_to_file):
             in_module = False
             component = {'Designator': designator,
                          'smd_count': smd_counter,
-                         'thru_hole': tht_counter}
+                         'thru_hole': tht_counter,
+                         'PCB side': side}
             components.append(component)
 
     print('done.')
@@ -152,6 +163,7 @@ def merge_components(components_from_xml, components_from_pcb):
             if component_from_xml['Designator'] == component_from_pcb['Designator']:
                 component_from_xml['SMD pads'] = component_from_pcb['smd_count']
                 component_from_xml['THT pads'] = component_from_pcb['thru_hole']
+                component_from_xml['PCB side'] = component_from_pcb['PCB side']
 
     print('done.')
 
