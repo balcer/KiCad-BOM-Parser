@@ -20,11 +20,16 @@ def main():
         sys.exit()
     else:
         path_to_project_directory = sys.argv[1] + '/'
+        xml_file_name = ''
         for project_file in os.listdir(path_to_project_directory):
             if project_file.endswith(".xml"):
                 xml_file_name = project_file
             elif project_file.endswith(".kicad_pcb"):
                 pcb_file_name = project_file
+
+        if xml_file_name == '':
+            print("Coudnt find .xml file")
+            sys.exit()
 
         path_to_xml_file = path_to_project_directory + xml_file_name
         path_to_pcb_file = path_to_project_directory + pcb_file_name
