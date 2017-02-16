@@ -140,10 +140,6 @@ def merge_components(components_from_xml, components_from_pcb):
 
     print('Merging data from xml and pcb files...', end='')
 
-    if len(components_from_xml) != len(components_from_pcb):
-        print('error.')
-        sys.exit()
-
     component_counter = 0
 
     for component_from_xml in components_from_xml:
@@ -152,7 +148,7 @@ def merge_components(components_from_xml, components_from_pcb):
                 component_counter += 1
                 break
 
-    if len(components_from_xml) != component_counter:
+    if len(components_from_xml) < component_counter:
         print('error.')
         sys.exit()
 
