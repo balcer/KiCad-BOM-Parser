@@ -156,7 +156,7 @@ def merge_components(components_from_xml, components_from_pcb):
         print('error.')
         sys.exit()
 
-    """Adding features from pcb component list to xml component list"""
+        #Adding features from pcb component list to xml component list
 
     for component_from_xml in components_from_xml:
         for component_from_pcb in components_from_pcb:
