@@ -57,9 +57,15 @@ def extract_components_from_xml(path_to_file):
         sys.exit()
     root = tree.getroot()
     for comp in root.iter('comp'):
+
+        try:
+            footprint = comp.find('footprint').text
+        except AttributeError:
+            footprint = ''
+
         component = {'Designator': comp.get('ref'),
                      'Value': comp.find('value').text,
-                     'Footprint': comp.find('footprint').text}
+                     'Footprint': footprint}
         fields = comp.find('fields')
         if fields is not None:
             for field in fields.iter('field'):
