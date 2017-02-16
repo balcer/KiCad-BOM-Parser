@@ -39,8 +39,9 @@ def main():
 
     components_from_xml = extract_components_from_xml(path_to_xml_file)
     components_from_pcb = extract_components_from_pcb(path_to_pcb_file)
-    components_merged = merge_components(components_from_xml, components_from_pcb)
-    unique_components = find_unique_components(components_merged, features_to_skip)
+    merged_components = merge_components(components_from_xml, components_from_pcb)
+    physical_components = remove_none_physical_components(merged_components)
+    unique_components = find_unique_components(physical_components, features_to_skip)
     generate_csv(unique_components, path_to_csv_file)
 
 def extract_components_from_xml(path_to_file):
@@ -164,6 +165,26 @@ def merge_components(components_from_xml, components_from_pcb):
     print('done.')
 
     return components_from_xml
+
+def remove_none_physical_components(components):
+
+    """removes from components list parts witch has no physical"""
+
+    print('Removing none physical components...', end='')
+
+    physical_components = []
+    none_physical_counter = 0
+
+    for component in list(components):
+        if 'Name' in component:
+            physical_components.append(component)
+        else:
+            none_physical_counter += 1
+
+    print('done.')
+    print('{} components removed.'.format(none_physical_counter))
+
+    return physical_components
 
 def is_component_equal(component1, component2, omit_features):
 
