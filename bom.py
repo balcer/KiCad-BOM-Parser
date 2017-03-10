@@ -265,10 +265,11 @@ def get_all_features(components):
 
     """Extracts all features from component list."""
 
-    features = set()
+    features = ['Designator', 'Value', 'Name', 'Quantity','Manufacturer', 'THT pads', 'SMD pads']
     for component in components:
         for key in component:
-            features.add(key)
+            if key not in features:
+                features.append(key)
     return features
 
 def generate_csv(unique_components, path_to_file):
