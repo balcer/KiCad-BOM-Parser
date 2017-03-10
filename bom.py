@@ -127,7 +127,14 @@ def extract_components_from_pcb(path_to_file):
             component = {'Designator': designator,
                          'smd_count': smd_counter,
                          'thru_hole': tht_counter,
-                         'PCB side': side}
+                         'PCB side': side,
+                         'component_type': ''}
+            if component['smd_count'] > 0 and component['thru_hole'] > 0:
+                component['component_type'] = 'SMD/THT'
+            elif component['smd_count'] > 0:
+                component['component_type'] = 'SMD'
+            elif component['thru_hole'] > 0:
+                component['component_type'] = 'THT'
             components.append(component)
 
     print('done.')
@@ -161,6 +168,7 @@ def merge_components(components_from_xml, components_from_pcb):
                 component_from_xml['SMD pads'] = component_from_pcb['smd_count']
                 component_from_xml['THT pads'] = component_from_pcb['thru_hole']
                 component_from_xml['PCB side'] = component_from_pcb['PCB side']
+                component_from_xml['Component type'] = component_from_pcb['component_type']
 
     print('done.')
 
@@ -265,7 +273,17 @@ def get_all_features(components):
 
     """Extracts all features from component list."""
 
-    features = ['Designator', 'Value', 'Name', 'Quantity','Manufacturer', 'THT pads', 'SMD pads']
+    features = ['Designator',
+                'Value',
+                'Name',
+                'Quantity',
+                'Manufacturer',
+                'THT pads',
+                'SMD pads',
+                'Component type',
+                'PCB side',
+                'Footprint',
+                'Link']
     for component in components:
         for key in component:
             if key not in features:
