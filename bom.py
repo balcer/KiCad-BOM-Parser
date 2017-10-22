@@ -10,30 +10,32 @@ import sys
 import os
 import string
 import natsort
+import argparse as ap
 
 def main():
 
     """Main function of the program."""
 
-    if len(sys.argv) < 2 or sys.argv[1] == '--help':
-        print('Usage: python {} KICAD_PROJECT_DIRECTORY'.format(sys.argv[0]))
+    parser = ap.ArgumentParser()
+    parser.add_argument('path',
+                        help = "path to your KiCAD project directory")
+    args = parser.parse_args()
+
+    path_to_project_directory = args.path + '/'
+    xml_file_name = ''
+    for project_file in os.listdir(path_to_project_directory):
+        if project_file.endswith(".xml"):
+            xml_file_name = project_file
+        elif project_file.endswith(".kicad_pcb"):
+            pcb_file_name = project_file
+
+    if xml_file_name == '':
+        print("Coudnt find .xml file")
         sys.exit()
-    else:
-        path_to_project_directory = sys.argv[1] + '/'
-        xml_file_name = ''
-        for project_file in os.listdir(path_to_project_directory):
-            if project_file.endswith(".xml"):
-                xml_file_name = project_file
-            elif project_file.endswith(".kicad_pcb"):
-                pcb_file_name = project_file
 
-        if xml_file_name == '':
-            print("Coudnt find .xml file")
-            sys.exit()
-
-        path_to_xml_file = path_to_project_directory + xml_file_name
-        path_to_pcb_file = path_to_project_directory + pcb_file_name
-        path_to_csv_file = path_to_project_directory + os.path.splitext(xml_file_name)[0] + ".csv"
+    path_to_xml_file = path_to_project_directory + xml_file_name
+    path_to_pcb_file = path_to_project_directory + pcb_file_name
+    path_to_csv_file = path_to_project_directory + os.path.splitext(xml_file_name)[0] + ".csv"
 
     features_to_skip = ['Designator', 'Quantity']
 
