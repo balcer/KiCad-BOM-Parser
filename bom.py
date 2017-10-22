@@ -19,6 +19,10 @@ def main():
     parser = ap.ArgumentParser()
     parser.add_argument('path',
                         help = "path to your KiCAD project directory")
+    parser.add_argument("-rn",
+                        "--remove_name",
+                        action="store_true",
+                        help = "removes components without \"Name\" field")
     args = parser.parse_args()
 
     path_to_project_directory = args.path + '/'
@@ -42,7 +46,10 @@ def main():
     components_from_xml = extract_components_from_xml(path_to_xml_file)
     components_from_pcb = extract_components_from_pcb(path_to_pcb_file)
     merged_components = merge_components(components_from_xml, components_from_pcb)
-    physical_components = remove_none_physical_components(merged_components)
+    if args.remove_name:
+        physical_components = remove_none_physical_components(merged_components)
+    else:
+        physical_components = merged_components
     unique_components = find_unique_components(physical_components, features_to_skip)
     generate_csv(unique_components, path_to_csv_file)
 
